@@ -267,6 +267,9 @@ if ("x86_64" IN_LIST ARCHITECTURE)
             xbyak::xbyak
             Zydis::Zydis
     )
+    # Newer versions of xbyak (>= 7.25.0) have stricter checks that currently
+    # fail in dynarmic
+    target_compile_definitions(dynarmic PRIVATE XBYAK_STRICT_CHECK_MEM_REG_SIZE=0)
 
     target_architecture_specific_sources(dynarmic "x86_64"
         backend/x64/abi.cpp
