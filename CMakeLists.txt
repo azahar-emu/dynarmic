@@ -111,6 +111,9 @@ else()
         # GCC knows that the variable is actually a Reg64.  isMEM() will never return true for a
         # Reg64, but GCC doesn't know that.
         list(APPEND DYNARMIC_CXX_FLAGS -Wno-array-bounds)
+
+        # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117063
+        list(APPEND DYNARMIC_CXX_FLAGS -Wno-stringop-overread)
     endif()
 
     if (CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang")
