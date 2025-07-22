@@ -42,7 +42,7 @@ jobs:
         if: ${{matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'}}
         uses: actions/checkout@v2
         with:
-          repository: MerryMage/unicorn
+          repository: yuzu-emu-mirror/unicorn
           path: externals/unicorn
 
       - name: Build unicorn
