@@ -20,8 +20,8 @@ jobs:
         run: >
           sudo apt-get update &&
           sudo apt-get install
-          gcc-10-aarch64-linux-gnu
-          g++-10-aarch64-linux-gnu
+          gcc-12-aarch64-linux-gnu
+          g++-12-aarch64-linux-gnu
           ninja-build
           qemu-user
 
@@ -43,8 +43,8 @@ jobs:
       - name: Configure CMake for AArch64 (Linux)
         if: matrix.platform == 'linux'
         env:
-          CC: aarch64-linux-gnu-gcc-10
-          CXX: aarch64-linux-gnu-g++-10
+          CC: aarch64-linux-gnu-gcc-12
+          CXX: aarch64-linux-gnu-g++-12
           BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
         run: >
           cmake
@@ -76,8 +76,8 @@ jobs:
       - name: Configure CMake for x86_64
         if: matrix.platform == 'linux'
         env:
-          CC: gcc-10
-          CXX: g++-10
+          CC: gcc-12
+          CXX: g++-12
           BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
         run: >
           cmake

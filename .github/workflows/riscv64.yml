@@ -20,8 +20,8 @@ jobs:
         run: >
           sudo apt-get update &&
           sudo apt-get install
-          gcc-10-riscv64-linux-gnu
-          g++-10-riscv64-linux-gnu
+          gcc-12-riscv64-linux-gnu
+          g++-12-riscv64-linux-gnu
           ninja-build
           qemu-user
 
@@ -43,8 +43,8 @@ jobs:
       - name: Configure CMake for RISCV64 (Linux)
         if: matrix.platform == 'linux'
         env:
-          CC: riscv64-linux-gnu-gcc-10
-          CXX: riscv64-linux-gnu-g++-10
+          CC: riscv64-linux-gnu-gcc-12
+          CXX: riscv64-linux-gnu-g++-12
           BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
         run: >
           cmake
