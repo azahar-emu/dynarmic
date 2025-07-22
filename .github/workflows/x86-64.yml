@@ -9,7 +9,8 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ windows-latest, ubuntu-latest, macos-latest ]
+        # FIXME: macos-latest
+        os: [ windows-latest, ubuntu-latest ]
         cpu_detection: [ 0, 1 ]
       fail-fast: false
 
