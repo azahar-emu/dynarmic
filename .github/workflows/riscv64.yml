@@ -26,7 +26,9 @@ jobs:
           qemu-user
 
       - name: Checkout dynarmic repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Ccache
         if: matrix.platform == 'linux'

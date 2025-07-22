@@ -28,7 +28,9 @@ jobs:
           echo "/usr/local/opt/llvm/bin" >> $GITHUB_PATH
 
       - name: Checkout dynarmic repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Install boost
         id: install-boost
