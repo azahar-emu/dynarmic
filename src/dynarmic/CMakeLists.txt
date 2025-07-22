@@ -462,6 +462,7 @@ elseif (APPLE)
                 -server "${CMAKE_CURRENT_SOURCE_DIR}/backend/x64/mig/mach_exc_server.c"
                 -sheader "${CMAKE_CURRENT_SOURCE_DIR}/backend/x64/mig/mach_exc_server.h"
                 "${MACH_EXC_DEFS_DIR}/mach/mach_exc.defs"
+            COMMAND_ERROR_IS_FATAL ANY
         )
         execute_process(
             COMMAND
@@ -474,6 +475,7 @@ elseif (APPLE)
                 -server "${CMAKE_CURRENT_SOURCE_DIR}/backend/arm64/mig/mach_exc_server.c"
                 -sheader "${CMAKE_CURRENT_SOURCE_DIR}/backend/arm64/mig/mach_exc_server.h"
                 "${MACH_EXC_DEFS_DIR}/mach/mach_exc.defs"
+            COMMAND_ERROR_IS_FATAL ANY
         )
         target_sources(dynarmic PRIVATE
             backend/exception_handler_macos.cpp
