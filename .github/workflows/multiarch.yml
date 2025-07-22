@@ -22,17 +22,18 @@ jobs:
       - name: Checkout dynarmic repo
         uses: actions/checkout@v2
 
-      - name: Checkout ext-boost repo
-        uses: actions/checkout@v2
+      - name: Install boost
+        id: install-boost
+        uses: MarkusJx/install-boost@v2
         with:
-          repository: MerryMage/ext-boost
-          path: externals/ext-boost
+          boost_version: 1.88.0
 
       - name: Configure CMake
+        env:
+          BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
         run: >
           cmake
           -B ${{github.workspace}}/build
-          -DBOOST_INCLUDEDIR=${{github.workspace}}/externals/ext-boost
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
           -G Ninja
