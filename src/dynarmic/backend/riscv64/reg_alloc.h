@@ -159,7 +159,7 @@ private:
     std::array<HostLocInfo, 32> fprs;
     std::array<HostLocInfo, SpillCount> spills;
 
-    mutable std::mt19937 rand_gen;
+    mutable size_t alloc_candidate_index{};
 };
 
 template<typename T>

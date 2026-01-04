@@ -145,7 +145,7 @@ set(TSL_ROBIN_MAP_ENABLE_INSTALL ON)
 
 find_package(Boost 1.57 REQUIRED)
 find_package(fmt 9 CONFIG)
-find_package(mcl 0.1.12 EXACT CONFIG)
+find_package(mcl 0.1.14 EXACT CONFIG)
 find_package(tsl-robin-map CONFIG)
 
 if ("arm64" IN_LIST ARCHITECTURE OR DYNARMIC_TESTS)
