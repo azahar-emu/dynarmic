@@ -59,6 +59,6 @@ template<>
 struct fmt::formatter<Dynarmic::IR::LocationDescriptor> : fmt::formatter<std::string> {
     template<typename FormatContext>
     auto format(Dynarmic::IR::LocationDescriptor descriptor, FormatContext& ctx) const {
-        return formatter<std::string>::format(ToString(descriptor), ctx);
+        return fmt::formatter<std::string>{}.format(ToString(descriptor), ctx);
     }
 };

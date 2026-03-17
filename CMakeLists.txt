@@ -140,15 +140,12 @@ if (DYNARMIC_USE_BUNDLED_EXTERNALS)
     set(CMAKE_DISABLE_FIND_PACKAGE_Zydis ON)
 endif()
 
-# Ensure that robin-map `export`s
-set(TSL_ROBIN_MAP_ENABLE_INSTALL ON)
-
 find_package(Boost 1.57 REQUIRED)
 find_package(fmt 9 CONFIG)
-find_package(mcl 0.1.14 EXACT CONFIG)
+find_package(mcl 0.1.12 EXACT CONFIG)
 find_package(tsl-robin-map CONFIG)
 
-if ("arm64" IN_LIST ARCHITECTURE OR DYNARMIC_TESTS)
+if ("arm64" IN_LIST ARCHITECTURE OR ARCHITECTURE_ARM64 OR DYNARMIC_TESTS)
     find_package(oaknut 2.0.1 CONFIG)
 endif()
 
@@ -156,7 +153,7 @@ if ("riscv" IN_LIST ARCHITECTURE)
     find_package(biscuit 0.9.1 QUIET)
 endif()
 
-if ("x86_64" IN_LIST ARCHITECTURE)
+if ("x86_64" IN_LIST ARCHITECTURE OR ARCHITECTURE_x86_64)
     find_package(xbyak 7 CONFIG)
     find_package(Zydis 4 CONFIG)
 endif()
@@ -182,30 +179,31 @@ if (DYNARMIC_TESTS)
     add_subdirectory(tests)
 endif()
 
-#
-# Install
-#
-include(GNUInstallDirs)
-include(CMakePackageConfigHelpers)
+if (MASTER_PROJECT)
+    #
+    # Install
+    #
+    include(GNUInstallDirs)
+    include(CMakePackageConfigHelpers)
 
-install(TARGETS dynarmic EXPORT dynarmicTargets)
-install(EXPORT dynarmicTargets
-    NAMESPACE dynarmic::
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/dynarmic"
-)
+    install(TARGETS dynarmic EXPORT dynarmicTargets)
+    install(EXPORT dynarmicTargets
+        NAMESPACE dynarmic::
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/dynarmic"
+    )
 
-configure_package_config_file(CMakeModules/dynarmicConfig.cmake.in
-    dynarmicConfig.cmake
-    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/dynarmic"
-)
-write_basic_package_version_file(dynarmicConfigVersion.cmake
-    COMPATIBILITY SameMajorVersion
-)
-install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/dynarmicConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/dynarmicConfigVersion.cmake"
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/dynarmic"
-)
+    configure_package_config_file(CMakeModules/dynarmicConfig.cmake.in
+        dynarmicConfig.cmake
+        INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/dynarmic"
+    )
+    write_basic_package_version_file(dynarmicConfigVersion.cmake
+        COMPATIBILITY SameMajorVersion
+    )
+    install(FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/dynarmicConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/dynarmicConfigVersion.cmake"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/dynarmic"
+    )
 
-install(DIRECTORY src/dynarmic TYPE INCLUDE FILES_MATCHING PATTERN "*.h")
-install(DIRECTORY src/dynarmic TYPE INCLUDE FILES_MATCHING PATTERN "*.inc")
+    install(DIRECTORY src/dynarmic TYPE INCLUDE FILES_MATCHING PATTERN "*.h")
+endif()

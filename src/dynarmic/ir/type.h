@@ -55,6 +55,6 @@ template<>
 struct fmt::formatter<Dynarmic::IR::Type> : fmt::formatter<std::string> {
     template<typename FormatContext>
     auto format(Dynarmic::IR::Type type, FormatContext& ctx) const {
-        return formatter<std::string>::format(Dynarmic::IR::GetNameOf(type), ctx);
+        return fmt::formatter<std::string>{}.format(Dynarmic::IR::GetNameOf(type), ctx);
     }
 };

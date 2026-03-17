@@ -261,7 +261,7 @@ if ("A64" IN_LIST DYNARMIC_FRONTENDS)
     )
 endif()
 
-if ("x86_64" IN_LIST ARCHITECTURE)
+if ("x86_64" IN_LIST ARCHITECTURE OR ARCHITECTURE_x86_64)
     target_link_libraries(dynarmic
         PRIVATE
             xbyak::xbyak
@@ -337,8 +337,9 @@ if ("x86_64" IN_LIST ARCHITECTURE)
     endif()
 endif()
 
-if ("arm64" IN_LIST ARCHITECTURE)
+if ("arm64" IN_LIST ARCHITECTURE OR ARCHITECTURE_ARM64)
     target_link_libraries(dynarmic PRIVATE merry::oaknut)
+    target_include_directories(dynarmic PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../externals/oaknut/include")
 
     target_architecture_specific_sources(dynarmic "arm64"
         backend/arm64/a32_jitstate.cpp
@@ -462,7 +463,6 @@ elseif (APPLE)
                 -server "${CMAKE_CURRENT_SOURCE_DIR}/backend/x64/mig/mach_exc_server.c"
                 -sheader "${CMAKE_CURRENT_SOURCE_DIR}/backend/x64/mig/mach_exc_server.h"
                 "${MACH_EXC_DEFS_DIR}/mach/mach_exc.defs"
-            COMMAND_ERROR_IS_FATAL ANY
         )
         execute_process(
             COMMAND
@@ -475,7 +475,6 @@ elseif (APPLE)
                 -server "${CMAKE_CURRENT_SOURCE_DIR}/backend/arm64/mig/mach_exc_server.c"
                 -sheader "${CMAKE_CURRENT_SOURCE_DIR}/backend/arm64/mig/mach_exc_server.h"
                 "${MACH_EXC_DEFS_DIR}/mach/mach_exc.defs"
-            COMMAND_ERROR_IS_FATAL ANY
         )
         target_sources(dynarmic PRIVATE
             backend/exception_handler_macos.cpp
@@ -498,6 +497,9 @@ target_include_directories(dynarmic PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
+if ("arm64" IN_LIST ARCHITECTURE)
+    target_include_directories(dynarmic PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../externals/oaknut/include")
+endif()
 set_target_properties(dynarmic PROPERTIES
     VERSION ${dynarmic_VERSION}
     SOVERSION ${dynarmic_VERSION_MAJOR}.${dynarmic_VERSION_MINOR}
@@ -527,7 +529,7 @@ endif()
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_compile_definitions(dynarmic PRIVATE FMT_USE_WINDOWS_H=0)
 endif()
-target_compile_definitions(dynarmic PRIVATE FMT_USE_USER_DEFINED_LITERALS=1)
+target_compile_definitions(dynarmic PRIVATE FMT_USE_USER_DEFINED_LITERALS=0)
 
 if (DYNARMIC_USE_PRECOMPILED_HEADERS)
     set(PRECOMPILED_HEADERS "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/ir/ir_emitter.h>")

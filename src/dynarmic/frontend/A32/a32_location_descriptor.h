@@ -157,6 +157,6 @@ template<>
 struct fmt::formatter<Dynarmic::A32::LocationDescriptor> : fmt::formatter<std::string> {
     template<typename FormatContext>
     auto format(Dynarmic::A32::LocationDescriptor descriptor, FormatContext& ctx) const {
-        return formatter<std::string>::format(Dynarmic::A32::ToString(descriptor), ctx);
+        return fmt::formatter<std::string>{}.format(Dynarmic::A32::ToString(descriptor), ctx);
     }
 };
