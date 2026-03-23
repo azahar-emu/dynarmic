@@ -27,7 +27,6 @@ TEST_CASE("Host CPU supports", "[a64]") {
     cpu_info.putFamily();
     const std::array types{
 #define X(NAME) std::make_pair(Cpu::Type{Cpu::NAME}, &#NAME[1])
-        X(t3DN),
         X(tADX),
         X(tAESNI),
         X(tAMD),
@@ -36,8 +35,6 @@ TEST_CASE("Host CPU supports", "[a64]") {
         X(tAMX_TILE),
         X(tAVX),
         X(tAVX2),
-        X(tAVX512_4FMAPS),
-        X(tAVX512_4VNNIW),
         X(tAVX512_BF16),
         X(tAVX512_BITALG),
         X(tAVX512_FP16),
@@ -50,10 +47,8 @@ TEST_CASE("Host CPU supports", "[a64]") {
         X(tAVX512BW),
         X(tAVX512CD),
         X(tAVX512DQ),
-        X(tAVX512ER),
         X(tAVX512F),
         X(tAVX512IFMA),
-        X(tAVX512PF),
         X(tAVX512VBMI),
         X(tAVX512VL),
         X(tAVX_VNNI),
@@ -63,7 +58,6 @@ TEST_CASE("Host CPU supports", "[a64]") {
         X(tCLFLUSHOPT),
         X(tCLZERO),
         X(tCMOV),
-        X(tE3DN),
         X(tENHANCED_REP),
         X(tF16C),
         X(tFMA),
