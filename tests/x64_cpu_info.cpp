@@ -75,7 +75,6 @@ TEST_CASE("Host CPU supports", "[a64]") {
         X(tPCLMULQDQ),
         X(tPOPCNT),
         X(tPREFETCHW),
-        X(tPREFETCHWT1),
         X(tRDRAND),
         X(tRDSEED),
         X(tRDTSCP),
