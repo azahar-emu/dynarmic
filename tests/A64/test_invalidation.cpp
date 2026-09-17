@@ -111,3 +111,41 @@ TEST_CASE("ensure fast dispatch entry is cleared even when a block does not have
     jit.Run();
     REQUIRE(jit.GetRegister(0) == 69);
 }
+
+TEST_CASE("invalidating a range covering several blocks invalidates all of them", "[a64]") {
+    A64TestEnv env;
+
+    A64::UserConfig conf{&env};
+    A64::Jit jit{conf};
+
+    env.code_mem.emplace_back(0xd2800540);  // MOV X0, 42
+    env.code_mem.emplace_back(0x14000000);  // B .
+    env.code_mem.emplace_back(0xd28000e0);  // MOV X0, 7
+    env.code_mem.emplace_back(0x14000000);  // B .
+
+    jit.SetPC(0);
+    env.ticks_left = 4;
+    jit.Run();
+    REQUIRE(jit.GetRegister(0) == 42);
+
+    jit.SetPC(8);
+    env.ticks_left = 4;
+    jit.Run();
+    REQUIRE(jit.GetRegister(0) == 7);
+
+    env.code_mem[0] = 0xd28008a0;  // MOV X0, 69
+    env.code_mem[2] = 0xd2800120;  // MOV X0, 9
+
+    // One range, both blocks.
+    jit.InvalidateCacheRange(0, 16);
+
+    jit.SetPC(0);
+    env.ticks_left = 4;
+    jit.Run();
+    REQUIRE(jit.GetRegister(0) == 69);
+
+    jit.SetPC(8);
+    env.ticks_left = 4;
+    jit.Run();
+    REQUIRE(jit.GetRegister(0) == 9);
+}
