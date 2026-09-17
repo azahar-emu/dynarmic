@@ -136,7 +136,6 @@ TEST_CASE("invalidating a range covering several blocks invalidates all of them"
     env.code_mem[0] = 0xd28008a0;  // MOV X0, 69
     env.code_mem[2] = 0xd2800120;  // MOV X0, 9
 
-    // One range, both blocks.
     jit.InvalidateCacheRange(0, 16);
 
     jit.SetPC(0);

@@ -26,20 +26,12 @@ template<typename ProgramCounterType>
 tsl::robin_set<IR::LocationDescriptor> BlockRangeInformation<ProgramCounterType>::InvalidateRanges(const boost::icl::interval_set<ProgramCounterType>& ranges) {
     tsl::robin_set<IR::LocationDescriptor> erase_locations;
     for (auto invalidate_interval : ranges) {
-        if (boost::icl::is_empty(invalidate_interval)) {
-            continue;
-        }
-        // equal_range orders intervals with an exclusive-less comparison, and that
-        // comparison is not a strict weak ordering once intervals overlap: every block
-        // inside the invalidated range compares equivalent to the range while the blocks
-        // stay ordered among themselves, so the search behind equal_range returns the
-        // first block and stops. Walk the map instead, from the first block that can
-        // reach into the range up to the first one that starts past it.
-        const auto range_first = boost::icl::first(invalidate_interval);
-        const auto range_last = boost::icl::last(invalidate_interval);
-        const auto start = boost::icl::discrete_interval<ProgramCounterType>::closed(range_first, range_first);
-        for (auto it = block_ranges.lower_bound(start); it != block_ranges.end(); ++it) {
-            if (boost::icl::first(it->first) > range_last) {
+        // equal_range only reaches the first block of the range: overlapping intervals all compare equivalent
+        // to the range while staying ordered among themselves, which is not a strict weak ordering.
+        const auto first = boost::icl::first(invalidate_interval);
+        const auto last = boost::icl::last(invalidate_interval);
+        for (auto it = block_ranges.lower_bound(boost::icl::discrete_interval<ProgramCounterType>::closed(first, first)); it != block_ranges.end(); ++it) {
+            if (boost::icl::first(it->first) > last) {
                 break;
             }
             for (const auto& descriptor : it->second) {
