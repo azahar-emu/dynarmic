@@ -26,11 +26,7 @@ template<typename ProgramCounterType>
 tsl::robin_set<IR::LocationDescriptor> BlockRangeInformation<ProgramCounterType>::InvalidateRanges(const boost::icl::interval_set<ProgramCounterType>& ranges) {
     tsl::robin_set<IR::LocationDescriptor> erase_locations;
     for (auto invalidate_interval : ranges) {
-        // equal_range cannot be used here: every block inside the invalidated
-        // interval compares equivalent to it while the blocks stay ordered
-        // among themselves, which is not a strict weak ordering, so it stops
-        // after the first of them. Walk from the first block that reaches the
-        // interval to the last one that starts inside it.
+        // equal_range misses blocks when intervals overlap, so walk the map instead.
         const auto first = boost::icl::first(invalidate_interval);
         const auto last = boost::icl::last(invalidate_interval);
         for (auto it = block_ranges.lower_bound(boost::icl::discrete_interval<ProgramCounterType>::closed(first, first));
