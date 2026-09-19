@@ -208,6 +208,49 @@ TEST_CASE("arm: smuad (Edge-case)", "[arm][A32]") {
     REQUIRE(jit.Cpsr() == 0x080001d0);
 }
 
+TEST_CASE("arm: InvalidateCacheRange invalidates every block in the range", "[arm][A32]") {
+    ArmTestEnv test_env;
+    A32::Jit jit{GetUserConfig(&test_env)};
+    test_env.code_mem = {
+        0xe3a00001,  // 0x00: mov r0, #1
+        0xea000002,  // 0x04: b 0x14
+        0xe320f000,  // 0x08: nop
+        0xe320f000,  // 0x0c: nop
+        0xe320f000,  // 0x10: nop
+        0xe3a01002,  // 0x14: mov r1, #2
+        0xea000002,  // 0x18: b 0x28
+        0xe320f000,  // 0x1c: nop
+        0xe320f000,  // 0x20: nop
+        0xe320f000,  // 0x24: nop
+        0xe3a02003,  // 0x28: mov r2, #3
+        0xeafffffe,  // 0x2c: b +#0 (infinite loop)
+    };
+
+    jit.Regs() = {};
+    jit.SetCpsr(0x000001d0);  // User-mode
+
+    test_env.ticks_left = 6;
+    jit.Run();
+
+    REQUIRE(jit.Regs()[0] == 1);
+    REQUIRE(jit.Regs()[1] == 2);
+    REQUIRE(jit.Regs()[2] == 3);
+
+    // Change the code of all three blocks and invalidate them with one range.
+    test_env.code_mem[0] = 0xe3a00004;   // mov r0, #4
+    test_env.code_mem[5] = 0xe3a01005;   // mov r1, #5
+    test_env.code_mem[10] = 0xe3a02006;  // mov r2, #6
+    jit.InvalidateCacheRange(/*start_memory_location = */ 0, /* length_in_bytes = */ 0x30);
+
+    jit.Regs() = {};
+    test_env.ticks_left = 6;
+    jit.Run();
+
+    REQUIRE(jit.Regs()[0] == 4);
+    REQUIRE(jit.Regs()[1] == 5);
+    REQUIRE(jit.Regs()[2] == 6);
+}
+
 TEST_CASE("arm: Test InvalidateCacheRange", "[arm][A32]") {
     ArmTestEnv test_env;
     A32::Jit jit{GetUserConfig(&test_env)};
