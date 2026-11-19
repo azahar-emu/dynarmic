@@ -33,12 +33,6 @@ jobs:
         with:
           submodules: true
 
-      - name: Install boost
-        id: install-boost
-        uses: MarkusJx/install-boost@v2
-        with:
-          boost_version: 1.88.0
-
       - name: Checkout unicorn repo
         if: ${{matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'}}
         uses: actions/checkout@v2
@@ -57,7 +51,6 @@ jobs:
           CC: gcc-12
           CXX: g++-12
           CXXFLAGS: -Wp,-D_GLIBCXX_ASSERTIONS
-          BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
         run: >
           cmake
           -B ${{github.workspace}}/build
@@ -71,8 +64,6 @@ jobs:
 
       - name: Configure CMake
         if: ${{matrix.os == 'macos-latest'}}
-        env:
-          BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
         run: >
           cmake
           -B ${{github.workspace}}/build
@@ -86,8 +77,6 @@ jobs:
 
       - name: Configure CMake
         if: ${{matrix.os == 'windows-latest'}}
-        env:
-          BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
         run: >
           cmake
           -B ${{github.workspace}}/build

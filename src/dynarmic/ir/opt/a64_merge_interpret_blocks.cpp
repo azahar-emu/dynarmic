@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: 0BSD
  */
 
-#include <boost/variant/get.hpp>
+#include <variant>
+
 #include <mcl/stdint.hpp>
 
 #include "dynarmic/frontend/A64/a64_location_descriptor.h"
@@ -27,7 +28,7 @@ void A64MergeInterpretBlocksPass(IR::Block& block, A64::UserCallbacks* cb) {
             return false;
 
         const IR::Terminal terminal = new_block.GetTerminal();
-        if (auto term = boost::get<IR::Term::Interpret>(&terminal)) {
+        if (auto term = std::get_if<IR::Term::Interpret>(&terminal)) {
             return term->next == location;
         }
 
@@ -35,7 +36,7 @@ void A64MergeInterpretBlocksPass(IR::Block& block, A64::UserCallbacks* cb) {
     };
 
     IR::Terminal terminal = block.GetTerminal();
-    auto term = boost::get<IR::Term::Interpret>(&terminal);
+    auto term = std::get_if<IR::Term::Interpret>(&terminal);
     if (!term)
         return;
 

@@ -7,6 +7,7 @@
 
 #include "dynarmic/backend/arm64/address_space.h"
 #include "dynarmic/backend/block_range_information.h"
+#include "dynarmic/common/interval_set.h"
 #include "dynarmic/interface/A32/config.h"
 
 namespace Dynarmic::Backend::Arm64 {
@@ -19,7 +20,7 @@ public:
 
     IR::Block GenerateIR(IR::LocationDescriptor) const override;
 
-    void InvalidateCacheRanges(const boost::icl::interval_set<u32>& ranges);
+    void InvalidateCacheRanges(const Common::IntervalSet<u32>& ranges);
 
 protected:
     friend class A32Core;

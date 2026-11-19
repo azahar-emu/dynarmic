@@ -5,7 +5,9 @@ add_executable(dynarmic_tests
     fp/FPValue.cpp
     fp/mantissa_util_tests.cpp
     fp/unpacked_tests.cpp
+    interval_set_tests.cpp
     rand_int.h
+    terminal_tests.cpp
 )
 
 if ("A32" IN_LIST DYNARMIC_FRONTENDS)
@@ -88,7 +90,7 @@ if (("A32" IN_LIST DYNARMIC_FRONTENDS) AND ("A64" IN_LIST DYNARMIC_FRONTENDS))
 
     create_target_directory_groups(dynarmic_print_info)
 
-    target_link_libraries(dynarmic_print_info PRIVATE dynarmic Boost::boost fmt::fmt merry::mcl)
+    target_link_libraries(dynarmic_print_info PRIVATE dynarmic fmt::fmt merry::mcl)
     target_include_directories(dynarmic_print_info PRIVATE . ../src)
     target_compile_options(dynarmic_print_info PRIVATE ${DYNARMIC_CXX_FLAGS})
     target_compile_definitions(dynarmic_print_info PRIVATE FMT_USE_USER_DEFINED_LITERALS=1)
@@ -103,7 +105,7 @@ if (("A32" IN_LIST DYNARMIC_FRONTENDS) AND ("A64" IN_LIST DYNARMIC_FRONTENDS))
 
     create_target_directory_groups(dynarmic_test_generator)
 
-    target_link_libraries(dynarmic_test_generator PRIVATE dynarmic Boost::boost fmt::fmt merry::mcl)
+    target_link_libraries(dynarmic_test_generator PRIVATE dynarmic fmt::fmt merry::mcl)
     target_include_directories(dynarmic_test_generator PRIVATE . ../src)
     target_compile_options(dynarmic_test_generator PRIVATE ${DYNARMIC_CXX_FLAGS})
     target_compile_definitions(dynarmic_test_generator PRIVATE FMT_USE_USER_DEFINED_LITERALS=1)
@@ -116,7 +118,7 @@ if (("A32" IN_LIST DYNARMIC_FRONTENDS) AND ("A64" IN_LIST DYNARMIC_FRONTENDS))
 
     create_target_directory_groups(dynarmic_test_reader)
 
-    target_link_libraries(dynarmic_test_reader PRIVATE dynarmic Boost::boost fmt::fmt merry::mcl)
+    target_link_libraries(dynarmic_test_reader PRIVATE dynarmic fmt::fmt merry::mcl)
     target_include_directories(dynarmic_test_reader PRIVATE . ../src)
     target_compile_options(dynarmic_test_reader PRIVATE ${DYNARMIC_CXX_FLAGS})
     target_compile_definitions(dynarmic_test_reader PRIVATE FMT_USE_USER_DEFINED_LITERALS=1)
@@ -124,7 +126,7 @@ endif()
 
 create_target_directory_groups(dynarmic_tests)
 
-target_link_libraries(dynarmic_tests PRIVATE dynarmic Boost::boost Catch2::Catch2WithMain fmt::fmt merry::mcl)
+target_link_libraries(dynarmic_tests PRIVATE dynarmic Catch2::Catch2WithMain fmt::fmt merry::mcl tsl::robin_map)
 target_include_directories(dynarmic_tests PRIVATE . ../src)
 target_compile_options(dynarmic_tests PRIVATE ${DYNARMIC_CXX_FLAGS})
 target_compile_definitions(dynarmic_tests PRIVATE FMT_USE_USER_DEFINED_LITERALS=1)

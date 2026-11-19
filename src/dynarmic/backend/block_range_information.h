@@ -5,12 +5,13 @@
 
 #pragma once
 
+#include <map>
 #include <set>
+#include <utility>
 
-#include <boost/icl/interval_map.hpp>
-#include <boost/icl/interval_set.hpp>
 #include <tsl/robin_set.h>
 
+#include "dynarmic/common/interval_set.h"
 #include "dynarmic/ir/location_descriptor.h"
 
 namespace Dynarmic::Backend {
@@ -18,12 +19,17 @@ namespace Dynarmic::Backend {
 template<typename ProgramCounterType>
 class BlockRangeInformation {
 public:
-    void AddRange(boost::icl::discrete_interval<ProgramCounterType> range, IR::LocationDescriptor location);
+    /// Records that the block at `location` was translated from the guest addresses [first, last].
+    void AddRange(ProgramCounterType first, ProgramCounterType last, IR::LocationDescriptor location);
     void ClearCache();
-    tsl::robin_set<IR::LocationDescriptor> InvalidateRanges(const boost::icl::interval_set<ProgramCounterType>& ranges);
+    /// Returns every recorded block whose range overlaps one of `ranges`.
+    tsl::robin_set<IR::LocationDescriptor> InvalidateRanges(const Common::IntervalSet<ProgramCounterType>& ranges);
 
 private:
-    boost::icl::interval_map<ProgramCounterType, std::set<IR::LocationDescriptor>> block_ranges;
+    /// first address -> {last address, block}
+    std::map<ProgramCounterType, std::set<std::pair<ProgramCounterType, IR::LocationDescriptor>>> block_ranges;
+    /// The largest (last - first) recorded: no range starting more than this below an address can reach it.
+    ProgramCounterType max_extent = 0;
 };
 
 }  // namespace Dynarmic::Backend

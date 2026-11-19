@@ -133,7 +133,7 @@ void EmitA64Terminal(oaknut::CodeGenerator& code, EmitContext& ctx, IR::Term::Ch
 }
 
 void EmitA64Terminal(oaknut::CodeGenerator& code, EmitContext& ctx, IR::Term::Terminal terminal, IR::LocationDescriptor initial_location, bool is_single_step) {
-    boost::apply_visitor([&](const auto& t) { EmitA64Terminal(code, ctx, t, initial_location, is_single_step); }, terminal);
+    Common::VisitVariant<void>(terminal, [&](const auto& t) { EmitA64Terminal(code, ctx, t, initial_location, is_single_step); });
 }
 
 void EmitA64Terminal(oaknut::CodeGenerator& code, EmitContext& ctx) {
