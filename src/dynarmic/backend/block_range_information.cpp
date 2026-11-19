@@ -5,31 +5,42 @@
 
 #include "dynarmic/backend/block_range_information.h"
 
-#include <boost/icl/interval_map.hpp>
-#include <boost/icl/interval_set.hpp>
 #include <mcl/stdint.hpp>
 #include <tsl/robin_set.h>
 
 namespace Dynarmic::Backend {
 
 template<typename ProgramCounterType>
-void BlockRangeInformation<ProgramCounterType>::AddRange(boost::icl::discrete_interval<ProgramCounterType> range, IR::LocationDescriptor location) {
-    block_ranges.add(std::make_pair(range, std::set<IR::LocationDescriptor>{location}));
+void BlockRangeInformation<ProgramCounterType>::AddRange(ProgramCounterType first, ProgramCounterType last, IR::LocationDescriptor location) {
+    if (last < first) {
+        return;
+    }
+    block_ranges[first].emplace(last, location);
+    if (last - first > max_extent) {
+        max_extent = last - first;
+    }
 }
 
 template<typename ProgramCounterType>
 void BlockRangeInformation<ProgramCounterType>::ClearCache() {
     block_ranges.clear();
+    max_extent = 0;
 }
 
 template<typename ProgramCounterType>
-tsl::robin_set<IR::LocationDescriptor> BlockRangeInformation<ProgramCounterType>::InvalidateRanges(const boost::icl::interval_set<ProgramCounterType>& ranges) {
+tsl::robin_set<IR::LocationDescriptor> BlockRangeInformation<ProgramCounterType>::InvalidateRanges(const Common::IntervalSet<ProgramCounterType>& ranges) {
     tsl::robin_set<IR::LocationDescriptor> erase_locations;
-    for (auto invalidate_interval : ranges) {
-        auto pair = block_ranges.equal_range(invalidate_interval);
-        for (auto it = pair.first; it != pair.second; ++it) {
-            for (const auto& descriptor : it->second) {
-                erase_locations.insert(descriptor);
+    for (const auto invalidate_interval : ranges) {
+        const ProgramCounterType lower = invalidate_interval.lower;
+        const ProgramCounterType upper = invalidate_interval.upper;
+        // A block [first, last] overlaps [lower, upper] when first <= upper and last >= lower;
+        // last - first <= max_extent, so first >= lower - max_extent.
+        const ProgramCounterType search_from = lower > max_extent ? lower - max_extent : 0;
+        for (auto it = block_ranges.lower_bound(search_from); it != block_ranges.end() && it->first <= upper; ++it) {
+            for (const auto& [last, descriptor] : it->second) {
+                if (last >= lower) {
+                    erase_locations.insert(descriptor);
+                }
             }
         }
     }

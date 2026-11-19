@@ -6,7 +6,6 @@
 #include <memory>
 #include <mutex>
 
-#include <boost/icl/interval_set.hpp>
 #include <mcl/assert.hpp>
 #include <mcl/scope_exit.hpp>
 #include <mcl/stdint.hpp>
@@ -15,6 +14,7 @@
 #include "dynarmic/backend/riscv64/a32_core.h"
 #include "dynarmic/backend/riscv64/a32_jitstate.h"
 #include "dynarmic/common/atomic.h"
+#include "dynarmic/common/interval_set.h"
 #include "dynarmic/interface/A32/a32.h"
 
 namespace Dynarmic::A32 {
@@ -64,7 +64,7 @@ struct Jit::Impl final {
 
     void InvalidateCacheRange(u32 start_address, size_t length) {
         std::unique_lock lock{invalidation_mutex};
-        invalid_cache_ranges.add(boost::icl::discrete_interval<u32>::closed(start_address, static_cast<u32>(start_address + length - 1)));
+        invalid_cache_ranges.add(start_address, static_cast<u32>(start_address + length - 1));
         HaltExecution(HaltReason::CacheInvalidation);
     }
 
@@ -137,7 +137,7 @@ private:
     volatile u32 halt_reason = 0;
 
     std::mutex invalidation_mutex;
-    boost::icl::interval_set<u32> invalid_cache_ranges;
+    Common::IntervalSet<u32> invalid_cache_ranges;
     bool invalidate_entire_cache = false;
 };
 

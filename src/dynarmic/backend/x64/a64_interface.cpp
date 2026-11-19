@@ -7,7 +7,6 @@
 #include <memory>
 #include <mutex>
 
-#include <boost/icl/interval_set.hpp>
 #include <mcl/assert.hpp>
 #include <mcl/bit_cast.hpp>
 #include <mcl/scope_exit.hpp>
@@ -18,6 +17,7 @@
 #include "dynarmic/backend/x64/devirtualize.h"
 #include "dynarmic/backend/x64/jitstate_info.h"
 #include "dynarmic/common/atomic.h"
+#include "dynarmic/common/interval_set.h"
 #include "dynarmic/common/x64_disassemble.h"
 #include "dynarmic/frontend/A64/translate/a64_translate.h"
 #include "dynarmic/interface/A64/a64.h"
@@ -121,8 +121,7 @@ public:
     void InvalidateCacheRange(u64 start_address, size_t length) {
         std::unique_lock lock{invalidation_mutex};
         const auto end_address = static_cast<u64>(start_address + length - 1);
-        const auto range = boost::icl::discrete_interval<u64>::closed(start_address, end_address);
-        invalid_cache_ranges.add(range);
+        invalid_cache_ranges.add(start_address, end_address);
         HaltExecution(HaltReason::CacheInvalidation);
     }
 
@@ -322,7 +321,7 @@ private:
     Optimization::PolyfillOptions polyfill_options;
 
     bool invalidate_entire_cache = false;
-    boost::icl::interval_set<u64> invalid_cache_ranges;
+    Common::IntervalSet<u64> invalid_cache_ranges;
     std::mutex invalidation_mutex;
 };
 

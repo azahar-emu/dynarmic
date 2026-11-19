@@ -172,8 +172,7 @@ A32EmitX64::BlockDescriptor A32EmitX64::Emit(IR::Block& block) {
     const A32::LocationDescriptor descriptor{block.Location()};
     const A32::LocationDescriptor end_location{block.EndLocation()};
 
-    const auto range = boost::icl::discrete_interval<u32>::closed(descriptor.PC(), end_location.PC() - 1);
-    block_ranges.AddRange(range, descriptor);
+    block_ranges.AddRange(descriptor.PC(), end_location.PC() - 1, descriptor);
 
     return RegisterBlock(descriptor, entrypoint, size);
 }
@@ -185,7 +184,7 @@ void A32EmitX64::ClearCache() {
     fastmem_patch_info.clear();
 }
 
-void A32EmitX64::InvalidateCacheRanges(const boost::icl::interval_set<u32>& ranges) {
+void A32EmitX64::InvalidateCacheRanges(const Common::IntervalSet<u32>& ranges) {
     InvalidateBasicBlocks(block_ranges.InvalidateRanges(ranges));
 }
 

@@ -5,7 +5,6 @@ include(CMakeFindDependencyMacro)
 set(ARCHITECTURE "@ARCHITECTURE@")
 
 if (NOT @BUILD_SHARED_LIBS@)
-    find_dependency(Boost 1.57)
     find_dependency(fmt 9)
     find_dependency(mcl 0.1.12 EXACT)
     find_dependency(tsl-robin-map)

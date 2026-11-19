@@ -81,7 +81,7 @@ bool ShouldTestInst(u32 instruction, u32 pc, bool is_thumb, bool is_last_inst, A
         return false;
     }
 
-    if (auto terminal = block.GetTerminal(); boost::get<IR::Term::Interpret>(&terminal)) {
+    if (auto terminal = block.GetTerminal(); std::get_if<IR::Term::Interpret>(&terminal)) {
         return false;
     }
 

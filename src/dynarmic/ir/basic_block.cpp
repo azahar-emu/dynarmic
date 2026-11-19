@@ -109,7 +109,7 @@ void Block::ReplaceTerminal(Terminal term) {
 }
 
 bool Block::HasTerminal() const {
-    return terminal.which() != 0;
+    return terminal.index() != 0;
 }
 
 size_t& Block::CycleCount() {
@@ -121,7 +121,7 @@ const size_t& Block::CycleCount() const {
 }
 
 static std::string TerminalToString(const Terminal& terminal_variant) {
-    struct : boost::static_visitor<std::string> {
+    struct {
         std::string operator()(const Term::Invalid&) const {
             return "<invalid terminal>";
         }
@@ -154,7 +154,7 @@ static std::string TerminalToString(const Terminal& terminal_variant) {
         }
     } visitor;
 
-    return boost::apply_visitor(visitor, terminal_variant);
+    return Common::VisitVariant<std::string>(terminal_variant, visitor);
 }
 
 std::string DumpBlock(const IR::Block& block) {

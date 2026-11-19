@@ -48,6 +48,7 @@ add_library(dynarmic
     common/fp/unpacked.cpp
     common/fp/unpacked.h
     common/fp/util.h
+    common/interval_set.h
     common/llvm_disassemble.cpp
     common/llvm_disassemble.h
     common/lut_from_list.h
@@ -508,7 +509,6 @@ set_target_properties(dynarmic PROPERTIES
 target_compile_options(dynarmic PRIVATE ${DYNARMIC_CXX_FLAGS})
 target_link_libraries(dynarmic
     PRIVATE
-        Boost::boost
         fmt::fmt
         merry::mcl
         tsl::robin_map

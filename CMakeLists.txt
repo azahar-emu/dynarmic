@@ -146,10 +146,6 @@ endif()
 # Ensure that robin-map `export`s
 set(TSL_ROBIN_MAP_ENABLE_INSTALL ON)
 
-# TODO: Only find if parent dependency didn't provide Boost. Azahar uses non-standard
-# boost library names.
-find_package(Boost 1.57 REQUIRED)
-
 if (NOT TARGET fmt::fmt)
     find_package(fmt 9 CONFIG)
 endif()

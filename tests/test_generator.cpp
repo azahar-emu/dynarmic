@@ -46,7 +46,7 @@ namespace {
 using namespace Dynarmic;
 
 bool ShouldTestInst(IR::Block& block) {
-    if (auto terminal = block.GetTerminal(); boost::get<IR::Term::Interpret>(&terminal)) {
+    if (auto terminal = block.GetTerminal(); std::get_if<IR::Term::Interpret>(&terminal)) {
         return false;
     }
 

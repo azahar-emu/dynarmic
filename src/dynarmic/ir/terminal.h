@@ -5,9 +5,11 @@
 
 #pragma once
 
-#include <boost/variant.hpp>
+#include <variant>
+
 #include <mcl/stdint.hpp>
 
+#include "dynarmic/common/variant_util.h"
 #include "dynarmic/ir/cond.h"
 #include "dynarmic/ir/location_descriptor.h"
 
@@ -78,7 +80,7 @@ struct If;
 struct CheckBit;
 struct CheckHalt;
 /// A Terminal is the terminal instruction in a MicroBlock.
-using Terminal = boost::variant<
+using Terminal = std::variant<
     Invalid,
     Interpret,
     ReturnToDispatch,
@@ -86,9 +88,9 @@ using Terminal = boost::variant<
     LinkBlockFast,
     PopRSBHint,
     FastDispatchHint,
-    boost::recursive_wrapper<If>,
-    boost::recursive_wrapper<CheckBit>,
-    boost::recursive_wrapper<CheckHalt>>;
+    Common::RecursiveWrapper<If>,
+    Common::RecursiveWrapper<CheckBit>,
+    Common::RecursiveWrapper<CheckHalt>>;
 
 /**
  * This terminal instruction conditionally executes one terminal or another depending

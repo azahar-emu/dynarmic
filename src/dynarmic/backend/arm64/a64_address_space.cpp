@@ -350,7 +350,7 @@ IR::Block A64AddressSpace::GenerateIR(IR::LocationDescriptor descriptor) const {
     return ir_block;
 }
 
-void A64AddressSpace::InvalidateCacheRanges(const boost::icl::interval_set<u64>& ranges) {
+void A64AddressSpace::InvalidateCacheRanges(const Common::IntervalSet<u64>& ranges) {
     InvalidateBasicBlocks(block_ranges.InvalidateRanges(ranges));
 }
 
@@ -593,8 +593,7 @@ EmitConfig A64AddressSpace::GetEmitConfig() {
 void A64AddressSpace::RegisterNewBasicBlock(const IR::Block& block, const EmittedBlockInfo&) {
     const A64::LocationDescriptor descriptor{block.Location()};
     const A64::LocationDescriptor end_location{block.EndLocation()};
-    const auto range = boost::icl::discrete_interval<u64>::closed(descriptor.PC(), end_location.PC() - 1);
-    block_ranges.AddRange(range, descriptor);
+    block_ranges.AddRange(descriptor.PC(), end_location.PC() - 1, descriptor);
 }
 
 }  // namespace Dynarmic::Backend::Arm64

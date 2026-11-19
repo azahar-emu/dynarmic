@@ -13,6 +13,7 @@
 #include "dynarmic/backend/block_range_information.h"
 #include "dynarmic/backend/x64/a64_jitstate.h"
 #include "dynarmic/backend/x64/emit_x64.h"
+#include "dynarmic/common/interval_set.h"
 #include "dynarmic/frontend/A64/a64_location_descriptor.h"
 #include "dynarmic/interface/A64/a64.h"
 #include "dynarmic/interface/A64/config.h"
@@ -49,7 +50,7 @@ public:
 
     void ClearCache() override;
 
-    void InvalidateCacheRanges(const boost::icl::interval_set<u64>& ranges);
+    void InvalidateCacheRanges(const Common::IntervalSet<u64>& ranges);
 
 protected:
     const A64::UserConfig conf;
